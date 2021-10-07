@@ -1,4 +1,4 @@
-import React ,{ createContext, useContext, useEffect, useRef, useState } from "react";
+import React ,{ createContext, useContext, useEffect,  useState } from "react";
 import { auth, database } from "../misc/firebase";
 
 
@@ -37,8 +37,8 @@ import { auth, database } from "../misc/firebase";
                 
             } else{
 
-                if (useRef) {
-                    useRef.off();
+                if (userRef) {
+                    userRef.off();
                     
                 }
 
@@ -50,9 +50,9 @@ import { auth, database } from "../misc/firebase";
 
         return ()=>{
             authUnSub();
-            if(useRef)
+            if(userRef)
             {
-                useRef.off();
+                userRef.off();
             }
         }
     },[])
