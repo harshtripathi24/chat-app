@@ -1,11 +1,28 @@
 /* eslint-disable arrow-body-style */
 import React from 'react'
+import { Button, Drawer, Icon } from 'rsuite'
+import { useProfile } from '../../context/profile.context'
 
-const Dashboard = () => {
+const Dashboard = ({onSignOut}) => {
+
+    const {profile} = useProfile();
+
     return (
-        <div>
-       fsdgfggaga
-        </div>
+        <>
+       <Drawer.Header>
+           <Drawer.Title>
+   Dshboard 
+           </Drawer.Title>
+       </Drawer.Header>
+       <Drawer.Body>
+           <h3>Hey, {profile.name}</h3>
+
+       </Drawer.Body>
+       <Drawer.Footer>
+           <Button block color='red' onClick={onSignOut} > <Icon icon='sign-out' /> Sign Out</Button>
+
+       </Drawer.Footer>
+        </>
     )
 }
 
