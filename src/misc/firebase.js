@@ -1,4 +1,7 @@
+/* eslint-disable prefer-destructuring */
 import firebase from 'firebase/app';
+import 'firebase/auth'
+import 'firebase/database'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB5lrmxnFgk-JdUTPbHDYmxms5Z7QWL4Ok',
@@ -10,3 +13,5 @@ const firebaseConfig = {
 };
 
 const app = firebase.initializeApp(firebaseConfig);
+export const auth = app.auth();
+export const database = app.database();
