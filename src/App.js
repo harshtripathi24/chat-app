@@ -13,7 +13,6 @@ import "./styles/main.scss";
 function App() {
   return (
     <ProfileProvider>
-
     <Switch>
       <PublicRoute path="/signin">
         <SignIn />
