@@ -19,12 +19,13 @@ import { auth, database } from "../misc/firebase";
               userRef =  database.ref(`/profiles/${authObj.uid}`);
               userRef.on('value',(snap)=>{
 
-                    const  {name , created} = snap.val()
+                    const  {name , created, avatar} = snap.val()
 
                 
                     const data = {
                         name,
                         created,
+                        avatar,
                         uid: authObj.uid,
                         email: authObj.email
                     }
