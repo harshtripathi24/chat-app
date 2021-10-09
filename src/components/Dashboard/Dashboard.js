@@ -2,6 +2,7 @@ import React from 'react'
 import { Alert, Button, Divider, Drawer, Icon } from 'rsuite'
 import { useProfile } from '../../context/profile.context'
 import { database } from '../../misc/firebase';
+import AvatarUploadBtn from '../AvatarUploadBtn';
 import EditableInput from '../EditableInput';
 import ProviderBlock from './ProviderBlock';
 
@@ -39,10 +40,11 @@ const Dashboard = ({onSignOut}) => {
            Nickname
            </h6>} />
 
+       <AvatarUploadBtn/>
        </Drawer.Body>
        <Drawer.Footer>
            <Button block color='red' onClick={onSignOut} > <Icon icon='sign-out' /> Sign Out</Button>
-
+     
        </Drawer.Footer>
         </>
     )
