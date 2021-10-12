@@ -1,22 +1,18 @@
 import React from 'react';
-import { Grid, Row,Col } from 'rsuite';
+import { Grid, Row, Col } from 'rsuite';
 import Sidebar from '../components/Sidebar';
 
 // eslint-disable-next-line arrow-body-style
-const Home = () => { 
-
-return (
-<Grid fluid className='h-100'>
-    <Row>
-        <Col xs={24} md={8} >
-            <Sidebar/>
+const Home = () => {
+  return (
+    <Grid fluid className="h-100">
+      <Row className="h-100">
+        <Col xs={24} md={8} className="h-100">
+          <Sidebar />
         </Col>
-    </Row>
-
-</Grid>
-
-)
-
-}
+      </Row>
+    </Grid>
+  );
+};
 
 export default Home;

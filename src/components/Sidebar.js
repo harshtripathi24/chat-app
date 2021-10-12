@@ -1,20 +1,32 @@
 /* eslint-disable arrow-body-style */
-import React from 'react'
-import CreateRoomBtnModal from './CreateRoomBtnModal'
-import DashboardToggle from './Dashboard/DashboardToggle'
+import React, { useEffect, useRef, useState } from 'react';
+import { Divider } from 'rsuite';
+import ChatRoomList from './ChatRoomList';
+import CreateRoomBtnModal from './CreateRoomBtnModal';
+import DashboardToggle from './Dashboard/DashboardToggle';
 
 const Sidebar = () => {
-return (
-        
-<div className="h-100 pt-2" >
-<div>
-    <DashboardToggle/>
-    <CreateRoomBtnModal/>
-</div>
-    
-</div>
-    
-    )
-}
+  const topSidebarRef = useRef();
+  const [height, setHeight] = useState(0);
 
-export default Sidebar
+  useEffect(() => {
+    if (topSidebarRef.current) {
+      setHeight(topSidebarRef.current.scrollHeight);
+
+      console.log(height);
+    }
+  }, [height, topSidebarRef]);
+
+  return (
+    <div className="h-100 pt-2">
+      <div ref={topSidebarRef}>
+        <DashboardToggle />
+        <CreateRoomBtnModal />
+        <Divider>Join conversation in Rooms</Divider>
+      </div>
+      <ChatRoomList aboveElHeight={height} />
+    </div>
+  );
+};
+
+export default Sidebar;

@@ -3,7 +3,7 @@
     "profiles": {
       "$user_id": {
         ".read": "$user_id === auth.uid",
-        ".write": "$user_id === auth.uid",
+        ".write": "$user_id === auth.uid"
       }
     },
         "rooms": {
@@ -11,7 +11,7 @@
         ".write": "auth !== null",
       "$room_id": {
         ".read": "auth !== null",
-        ".write": "auth !== null",
+        ".write": "auth !== null"
       }
     },
     ".read": false,
