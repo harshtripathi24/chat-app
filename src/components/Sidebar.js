@@ -13,7 +13,7 @@ const Sidebar = () => {
     if (topSidebarRef.current) {
       setHeight(topSidebarRef.current.scrollHeight);
 
-      console.log(height);
+      
     }
   }, [height, topSidebarRef]);
 
