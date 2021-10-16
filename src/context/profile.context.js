@@ -1,67 +1,90 @@
-import React ,{ createContext, useContext, useEffect,  useState } from "react";
-import { auth, database } from "../misc/firebase";
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import firebase from 'firebase/app';
+import { auth, database } from '../misc/firebase';
 
+export const isOfflineForDatabase = {
+  state: 'offline',
+  last_changed: firebase.database.ServerValue.TIMESTAMP,
+};
 
- const ProfileContext = createContext()
+const isOnlineForDatabase = {
+  state: 'online',
+  last_changed: firebase.database.ServerValue.TIMESTAMP,
+};
 
- export const ProfileProvider = ({children}) => {
-     
-    const [profile,setProfile] = useState(false);
-    const [isLoading, setIsLoading ] = useState(true);
+const ProfileContext = createContext();
 
-    useEffect(()=>{
+export const ProfileProvider = ({ children }) => {
+  const [profile, setProfile] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-        let  userRef;
-        const authUnSub = auth.onAuthStateChanged((authObj) => {
+  useEffect(() => {
+    let userRef;
+    let userStatusRef;
+    const authUnSub = auth.onAuthStateChanged(authObj => {
+      if (authObj) {
+        userStatusRef = database.ref(`/status/${authObj.uid}`);
+        userRef = database.ref(`/profiles/${authObj.uid}`);
+        userRef.on('value', snap => {
+          const { name, created, avatar } = snap.val();
 
-            if (authObj) {
+          const data = {
+            name,
+            created,
+            avatar,
+            uid: authObj.uid,
+            email: authObj.email,
+          };
 
-              userRef =  database.ref(`/profiles/${authObj.uid}`);
-              userRef.on('value',(snap)=>{
+          setProfile(data);
+          setIsLoading(false);
 
-                    const  {name , created, avatar} = snap.val()
-
-                
-                    const data = {
-                        name,
-                        created,
-                        avatar,
-                        uid: authObj.uid,
-                        email: authObj.email
-                    }
-    
-                    setProfile(data);
-                    setIsLoading(false);
-
-                })
-
-                
-            } else{
-
-                if (userRef) {
-                    userRef.off();
-                    
-                }
-
-                setProfile(null)
-                setIsLoading(false);
-                
+          database.ref('.info/connected').on('value', snapshot => {
+            if (snapshot.val() === false) {
+              return;
             }
-        })
 
-        return ()=>{
-            authUnSub();
-            if(userRef)
-            {
-                userRef.off();
-            }
+            userStatusRef
+              .onDisconnect()
+              .set(isOfflineForDatabase)
+              .then(() => {
+                userStatusRef.set(isOnlineForDatabase);
+              });
+          });
+        });
+      } else {
+        if (userRef) {
+          userRef.off();
         }
-    },[])
 
-    return <ProfileContext.Provider  value={{isLoading,profile}} >
-        {children}
+        if (userStatusRef) {
+          userStatusRef.off();
 
+          database.ref('.info/connected').off();
+        }
+
+        setProfile(null);
+        setIsLoading(false);
+      }
+    });
+
+    return () => {
+      authUnSub();
+      database.ref('.info/connected').off();
+      if (userRef) {
+        userRef.off();
+      }
+      if (userStatusRef) {
+        userStatusRef.off();
+      }
+    };
+  }, []);
+
+  return (
+    <ProfileContext.Provider value={{ isLoading, profile }}>
+      {children}
     </ProfileContext.Provider>
- }
+  );
+};
 
- export const useProfile = () => useContext(ProfileContext);
+export const useProfile = () => useContext(ProfileContext);
