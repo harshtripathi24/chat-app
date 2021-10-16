@@ -1,6 +1,7 @@
 import React from 'react';
 import TimeAgo from 'timeago-react';
 import ProfileAvatar from '../../ProfileAvatar';
+import ProfileInfoBtnModal from './ProfileInfoBtnModal';
 
 // eslint-disable-next-line arrow-body-style
 const MessageItem = ({ message }) => {
@@ -16,7 +17,11 @@ const MessageItem = ({ message }) => {
           size="xs"
         />
 
-        <span className="ml-2">{author.name}</span>
+        <ProfileInfoBtnModal
+          profile={author}
+          appearance="link"
+          className="p-0 ml-1 text-black"
+        />
         <TimeAgo
           datetime={created}
           className="font-normal text-black-45 ml-2 "
