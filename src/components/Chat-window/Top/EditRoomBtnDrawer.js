@@ -24,7 +24,7 @@ const EditRoomBtnDrawer = () => {
         Alert.success('Successfully Updatted', 4000);
       })
       .catch(err => {
-        Alert.error(err.mesage, 4000);
+        Alert.error(err.message, 4000);
       });
   };
 
