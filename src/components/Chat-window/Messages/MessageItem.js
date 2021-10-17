@@ -10,7 +10,7 @@ import IconBtnControl from './IconBtnControl';
 import ProfileInfoBtnModal from './ProfileInfoBtnModal';
 
 // eslint-disable-next-line arrow-body-style
-const MessageItem = ({ message, handleAdmin, handleLike }) => {
+const MessageItem = ({ message, handleAdmin, handleLike, handleDelete }) => {
   const { author, created, text, likes, likeCount } = message;
 
   const [selfRef, isHovered] = useHover();
@@ -71,6 +71,17 @@ const MessageItem = ({ message, handleAdmin, handleLike }) => {
           }}
           badgeContent={likeCount}
         />
+
+        {isAuthor && (
+          <IconBtnControl
+            isVisible={canShowIcons}
+            iconName="close"
+            toolTip="Delete this Message"
+            onClick={() => {
+              handleDelete(message.id);
+            }}
+          />
+        )}
       </div>
 
       <div>
