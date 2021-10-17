@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { Button } from 'rsuite';
 import TimeAgo from 'timeago-react';
 import { useCurrentRoom } from '../../../context/current-room.context';
-import { useHover } from '../../../misc/Custom-Hooks';
+import { useHover, useMediaQuery } from '../../../misc/Custom-Hooks';
 import { auth } from '../../../misc/firebase';
 import PresenceDot from '../../PresenceDot';
 import ProfileAvatar from '../../ProfileAvatar';
@@ -10,10 +10,12 @@ import IconBtnControl from './IconBtnControl';
 import ProfileInfoBtnModal from './ProfileInfoBtnModal';
 
 // eslint-disable-next-line arrow-body-style
-const MessageItem = ({ message, handleAdmin }) => {
-  const { author, created, text } = message;
+const MessageItem = ({ message, handleAdmin, handleLike }) => {
+  const { author, created, text, likes, likeCount } = message;
 
   const [selfRef, isHovered] = useHover();
+
+  const isMobile = useMediaQuery('(max-width: 992px)');
 
   const isAdmin = useCurrentRoom(v => v.isAdmin);
   const admins = useCurrentRoom(v => v.admins);
@@ -21,6 +23,9 @@ const MessageItem = ({ message, handleAdmin }) => {
   const isMsgAuthorAdmin = admins.includes(author.uid);
   const isAuthor = auth.currentUser.uid === author.uid;
   const canGrantAdmin = isAdmin && !isAuthor;
+
+  const canShowIcons = isMobile || isHovered || likes;
+  const isLiked = likes && Object.keys(likes).includes(auth.currentUser.uid);
 
   return (
     <li
@@ -57,12 +62,14 @@ const MessageItem = ({ message, handleAdmin }) => {
           className="font-normal text-black-45 ml-2 "
         />
         <IconBtnControl
-          {...(true ? { color: 'red' } : {})}
-          isVisible
+          {...(isLiked ? { color: 'red' } : {})}
+          isVisible={canShowIcons}
           iconName="heart"
           toolTip="Like this Message"
-          onClick={() => {}}
-          badgeContent={5}
+          onClick={() => {
+            handleLike(message.id);
+          }}
+          badgeContent={likeCount}
         />
       </div>
 
