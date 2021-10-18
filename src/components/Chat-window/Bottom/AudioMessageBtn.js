@@ -48,6 +48,7 @@ const AudioMessageBtn = ({ afterUpload }) => {
       onClick={onClick}
       disabled={isUploading}
       className={isRecording ? 'animate-blink ' : ''}
+      color="violet"
     >
       <Icon icon="microphone" />
       <ReactMic
