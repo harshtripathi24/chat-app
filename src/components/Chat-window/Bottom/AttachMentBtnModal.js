@@ -2,18 +2,17 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router';
 import { Alert, Button, Icon, InputGroup, Modal, Uploader } from 'rsuite';
-import { useModalState } from '../../../misc/Custom-Hooks';
 import { storage } from '../../../misc/firebase';
+import { useModalState } from '../../../misc/Custom-Hooks';
 
 const MAX_FILE_SIZE = 1000 * 1024 * 5;
 
 const AttachMentBtnModal = ({ afterUpload }) => {
-  const [isOpen, close, open] = useModalState();
+  const { chatId } = useParams();
+  const { isOpen, close, open } = useModalState();
   const [isLoading, setIsLoading] = useState(false);
 
-  const { chatId } = useParams();
-
-  const [fileList, setFileList] = useState();
+  const [fileList, setFileList] = useState([]);
 
   const onChange = fileArr => {
     const filtered = fileArr
@@ -25,8 +24,6 @@ const AttachMentBtnModal = ({ afterUpload }) => {
 
   const onUpload = async () => {
     try {
-      setIsLoading(true);
-
       const uploadPromises = fileList.map(f => {
         return storage
           .ref(`/chat/${chatId}`)
@@ -36,20 +33,24 @@ const AttachMentBtnModal = ({ afterUpload }) => {
           });
       });
 
-      const uploadSnapShot = await Promise.all(uploadPromises);
+      const uploadSnapShots = await Promise.all(uploadPromises);
 
-      const shapPromises = uploadSnapShot.map(async snap => {
+      const shapePromises = uploadSnapShots.map(async snap => {
         return {
           contentType: snap.metadata.contentType,
           name: snap.metadata.name,
-          url: snap.ref.getDownloadURL(),
+          url: await snap.ref.getDownloadURL(),
         };
       });
 
-      const files = await Promise.all(shapPromises);
+      const files = await Promise.all(shapePromises);
 
       await afterUpload(files);
+
+      setIsLoading(false);
+      close();
     } catch (err) {
+      setIsLoading(false);
       Alert.error(err.message, 4000);
     }
   };
@@ -71,8 +72,8 @@ const AttachMentBtnModal = ({ afterUpload }) => {
             onChange={onChange}
             multiple
             listType="picture-text"
-            className="w-100"
             disabled={isLoading}
+            className="w-100"
           />
         </Modal.Body>
         <Modal.Footer>

@@ -1,5 +1,5 @@
 /* eslint-disable arrow-body-style */
-import React, { useCallback, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { useParams } from 'react-router';
 import { Alert, Icon, Input, InputGroup } from 'rsuite';
 import firebase from 'firebase';
@@ -23,7 +23,7 @@ function assembleMessage(profile, chatId) {
 
 const ChatBottom = () => {
   const [input, setInput] = useState();
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { profile } = useProfile();
   const { chatId } = useParams();
@@ -49,13 +49,13 @@ const ChatBottom = () => {
       ...msgData,
       msgId: messageId,
     };
-    setLoading(true);
+    setIsLoading(true);
     try {
       await database.ref().update(updates);
       setInput('');
-      setLoading(false);
+      setIsLoading(false);
     } catch (err) {
-      setLoading(false);
+      setIsLoading(false);
       Alert.error(`Error occured: ${err.message}`, 4000);
     }
   };
@@ -67,9 +67,41 @@ const ChatBottom = () => {
     }
   };
 
+  const afterUpload = useCallback(
+    async files => {
+      setIsLoading(true);
+
+      const updates = {};
+      files.forEach(file => {
+        const msgData = assembleMessage(profile, chatId);
+
+        msgData.file = file;
+        const messageId = database.ref('messages').push().key;
+
+        updates[`/messages/${messageId}`] = msgData;
+      });
+
+      const lastMsgId = Object.keys(updates).pop();
+
+      updates[`/rooms/${chatId}/lastMessage`] = {
+        ...updates[lastMsgId],
+        msgId: lastMsgId,
+      };
+
+      try {
+        await database.ref().update(updates);
+        setIsLoading(false);
+      } catch (err) {
+        setIsLoading(false);
+        Alert.error(`Error occured: ${err.message}`, 4000);
+      }
+    },
+    [chatId, profile]
+  );
+
   return (
     <InputGroup>
-      <AttachMentBtnModal />
+      <AttachMentBtnModal afterUpload={afterUpload} />
       <Input
         placeholder="Write a new message here...."
         value={input}
@@ -89,4 +121,4 @@ const ChatBottom = () => {
   );
 };
 
-export default ChatBottom;
+export default memo(ChatBottom);

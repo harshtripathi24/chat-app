@@ -1,6 +1,6 @@
 /* eslint-disable no-alert */
 /* eslint-disable arrow-body-style */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 import { Alert } from 'rsuite';
 import { auth, database } from '../../../misc/firebase';
@@ -136,4 +136,4 @@ const Messages = () => {
   );
 };
 
-export default Messages;
+export default memo(Messages);
