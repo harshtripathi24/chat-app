@@ -106,7 +106,7 @@ const ChatBottom = () => {
       <AudioMessageBtn afterUpload={afterUpload} />
       <Input
         placeholder="Write a new message here...."
-        value={input}
+        value={input || ''}
         onChange={onInputChange}
         onKeyDown={onKeyDown}
       />
